@@ -32,6 +32,17 @@ FlashEmbed-Cpp/
 └── README.md           # 项目说明
 ```
 
+## 📅 开发计划 (Roadmap)
+
+本项目开发分为四个阶段，当前进展如下：
+
+- [x] **Phase 0: 项目初始化与基建** (Focus: Scaffold, CMake, CI/CD)
+- [ ] **Phase 1: 核心算子与 SIMD 加速** (Focus: AVX2, Strategy Pattern)
+- [ ] **Phase 2: 推理引擎集成** (Focus: ONNX Runtime, Zero-Copy)
+- [ ] **Phase 3: 服务化与全链路优化** (Focus: FastAPI, Dynamic Batching)
+
+👉 [查看详细开发路线图](docs/roadmap.md)
+
 ## 🏗️ 系统架构
 
 为了实现极致的性能与灵活性，系统采用了多层解耦设计。下方数据流展示了从 Python 请求到 C++ 算子加速的全链路过程：
