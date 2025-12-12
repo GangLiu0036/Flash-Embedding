@@ -1,0 +1,28 @@
+[build-system]
+requires = ["scikit-build-core", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "flash_embed"
+version = "0.1.0"
+description = "High-performance C++ Vectorization Inference Engine with AVX2 & OpenMP"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [{name = "Aweo", email = "liugscho@163.com"}]
+dependencies = [
+    "numpy>=1.20",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "locust", "requests"]
+
+# scikit-build-core Configuration
+[tool.scikit-build]
+cmake.version = ">=3.20"
+ninja.version = ">=1.5"
+cmake.source-dir = "."
+
+# Remove explicit component filtering to install everything by default
+# install.components = ["python_modules"] 
+cmake.verbose = true

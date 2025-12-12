@@ -1,0 +1,50 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash -el {0}  # Required for mamba activation
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Mambaforge
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        activate-environment: flash-embed
+        use-mamba: true
+        environment-file: environment.yml
+        auto-activate-base: false
+
+    - name: Verify Environment
+      run: |
+        conda info
+        conda list
+        cmake --version
+        ninja --version
+
+    - name: Configure CMake
+      run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build C++ Tests
+      run: cmake --build build --target cpp_tests
+
+    - name: Run C++ Tests
+      run: cd build && ./cpp_tests
+
+    - name: Install Python Extension
+      # --no-build-isolation is crucial when using conda-provided build tools
+      run: pip install --no-build-isolation -v .
+
+    - name: Run Python Tests
+      run: pytest tests/

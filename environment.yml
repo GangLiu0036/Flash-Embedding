@@ -1,0 +1,30 @@
+name: flash-embed
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  # C++ Build Tools (让 Conda 管理编译器，保证环境一致性)
+  - cmake>=3.20
+  - ninja
+  - cxx-compiler  # Conda-forge 提供的标准编译器套件
+  - make
+  
+  # C++ Libraries
+  - libgomp      # OpenMP runtime
+  - onnxruntime-cpp
+  
+  # Python Build Backend
+  - scikit-build-core
+  - pybind11
+  
+  # Testing & Dev
+  - pytest
+  - numpy>=1.20
+  - locust
+  
+  # Allow pip for local install
+  - pip:
+    - .
+

@@ -1,0 +1,80 @@
+# Flash-Embedding Cursor Rules
+
+This file defines the coding standards, architectural constraints, and workflow rules for the Flash-Embedding project.
+All AI-generated code and suggestions MUST adhere to these rules.
+
+## 1. Tech Stack & Environment
+
+- **Core Language**: C++17 (Strict adherence to Modern C++ practices).
+- **Scripting/Service**: Python 3.10+.
+- **Binding**: Pybind11 (Strict Zero-Copy enforcement).
+- **SIMD**: AVX2 Intrinsics (`<immintrin.h>`).
+- **Inference Backend**: ONNX Runtime C++ API.
+- **Build System**: CMake >= 3.20 + Ninja (via `scikit-build-core`).
+- **Package Management**: Conda/Mamba (`environment.yml`).
+
+## 2. Architecture & Design Principles
+
+- **Separation of Concerns**:
+  - **Python Layer**: Handles I/O, Request Validation, HTTP Service, Tokenization.
+  - **C++ Layer**: Handles Pure Computation, SIMD Operations, Model Inference.
+- **Zero-Copy Mandate**:
+  - Data transfer between Python and C++ MUST use `py::array_t` / `py::buffer` protocol.
+  - Explicitly mark `py::return_value_policy::reference` or `reference_internal` when returning C++ views to Python.
+  - **Forbidden**: `std::vector<float>` copying from Python lists for large tensors.
+- **SIMD Strategy Pattern**:
+  - Implement SIMD kernels (e.g., Cosine Similarity) using a Strategy Pattern to allow runtime switching (Scalar vs AVX2).
+  - Always align memory to 32 bytes for AVX2 (`_mm256_load_ps`).
+
+## 3. Coding Standards (C++)
+
+### Memory Management (RAII)
+- **Rule**: No raw `new` / `delete`.
+- **Preferred**: `std::unique_ptr`, `std::shared_ptr`, `std::vector`.
+- **Resource Management**: Wrap C-style resources (e.g., ONNX Runtime sessions, pointers) in RAII classes immediately.
+
+### Performance & Style
+- **Style**: Google C++ Style Guide.
+- **Arguments**: Pass complex objects by `const &`.
+- **Strings**: Use `std::string_view` for read-only string arguments.
+- **Looping**: OpenMP loops (`#pragma omp parallel for`) must be exception-safe.
+
+### Critical Safety
+- **Header Files (.h)**: **USER APPROVAL REQUIRED**. AI may propose `.h` content but must ask for explicit user review before finalizing. This is the "Law".
+- **Sanitizers**: Development builds must enable AddressSanitizer (`-fsanitize=address`) and UndefinedBehaviorSanitizer (`-fsanitize=undefined`).
+
+## 4. Testing & Verification
+
+- **"Guilty Until Proven Innocent"**:
+  - AI-generated code is assumed to be buggy until verified by a test.
+  - **Requirement**: Every C++ feature commit MUST include a corresponding Google Test (`tests/cpp/`) or PyTest (`tests/python/`).
+- **Consistency**: Numerical results must be cross-verified against PyTorch/NumPy reference implementations with strict tolerance (e.g., `atol=1e-5`).
+
+## 5. Workflow & Git
+
+- **Commit Message**: 
+  - 使用中文描述。
+  - 遵循 Conventional Commits 格式 (`feat:`, `fix:`, `perf:`, `test:`, `docs:`, `chore:`, `build:`, `ci:`)。
+  - 描述必须具体，涵盖改动的核心价值，拒绝笼统（如 "update files" 是禁止的）。
+- **Documentation**: Update `docs/` files immediately when architectural decisions change.
+- **Dev Log**: Record engineering challenges (e.g., segfaults, alignment issues) in `docs/dev_log.md`.
+
+## 6. Specific Snippets / Patterns
+
+### Pybind11 Numpy Binding
+```cpp
+// Correct way to accept numpy array without copy
+void process_embeddings(py::array_t<float, py::array::c_style | py::array::forcecast> input) {
+    py::buffer_info buf = input.request();
+    float* ptr = static_cast<float*>(buf.ptr);
+    // ...
+}
+```
+
+### AVX2 Alignment Check
+```cpp
+// Ensure pointer is 32-byte aligned
+if (reinterpret_cast<uintptr_t>(ptr) % 32 != 0) {
+    throw std::runtime_error("Memory not aligned to 32 bytes for AVX2");
+}
+```

@@ -1,0 +1,28 @@
+# Build directories
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.pyc
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Virtual Environments
+venv/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# C++ generated files
+*.so
+*.dylib
+*.dll
+*.o
+*.a
+

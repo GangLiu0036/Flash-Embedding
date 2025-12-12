@@ -1,0 +1,10 @@
+---
+BasedOnStyle: Google
+ColumnLimit: 100
+IndentWidth: 4
+AlignAfterOpenBracket: Align
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: Inline
+BreakBeforeBraces: Attach
+IncludeBlocks: Regroup
+SortIncludes: true
