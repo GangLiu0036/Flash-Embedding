@@ -4,15 +4,21 @@ dist/
 *.egg-info/
 __pycache__/
 *.pyc
+_skbuild/
+MANIFEST
 
 # IDEs
 .vscode/
 .idea/
 .DS_Store
+.cursor/
+*.swp
+*~
 
 # Virtual Environments
 venv/
 env/
+.env
 
 # Testing
 .pytest_cache/
@@ -25,4 +31,11 @@ htmlcov/
 *.dll
 *.o
 *.a
+compile_commands.json
 
+# CMake artifacts (if in-source build happens)
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+Makefile
