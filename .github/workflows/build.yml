@@ -1,50 +1,50 @@
-name: Build & Test
+name: Build & Test  # 工作流名称，显示在 GitHub Actions 页面上
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, dev ] # 当向 main 或 dev 分支 push 代码时触发
   pull_request:
-    branches: [ main ]
+    branches: [ main ]  # 当向 main 分支提交 PR 时触发
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04 # 运行环境: Github 提供的 Ubuntu 22.04 虚拟机
     defaults:
       run:
-        shell: bash -el {0}  # Required for mamba activation
+        shell: bash -el {0}  # 使用 login shell 模式，确保 Mamba 环境能被正确激活
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4 # 步骤1: 检出代码
 
     - name: Setup Mambaforge
-      uses: conda-incubator/setup-miniconda@v3
+      uses: conda-incubator/setup-miniconda@v3 # 步骤2: 安装 Conda 环境
       with:
         miniforge-variant: Miniforge3
         miniforge-version: latest
-        activate-environment: flash-embed
+        activate-environment: flash-embed # 激活 environment.yml 中定义的环境
         use-mamba: true
         environment-file: environment.yml
         auto-activate-base: false
 
     - name: Verify Environment
-      run: |
+      run: | # 验证环境信息 (调试用)
         conda info
         conda list
         cmake --version
         ninja --version
 
     - name: Configure CMake
-      run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release # 生成构建文件 (使用 Ninja 加速)
 
     - name: Build C++ Tests
-      run: cmake --build build --target cpp_tests
+      run: cmake --build build --target cpp_tests # 编译 C++ 测试程序
 
     - name: Run C++ Tests
-      run: cd build && ./cpp_tests
+      run: cd build && ./cpp_tests # 运行 C++ 单元测试
 
     - name: Install Python Extension
-      # --no-build-isolation is crucial when using conda-provided build tools
+      # --no-build-isolation: 直接使用当前 Conda 环境的工具链，避免 pip 创建隔离环境导致找不到依赖
       run: pip install --no-build-isolation -v .
 
     - name: Run Python Tests
-      run: pytest tests/
+      run: pytest tests/ # 运行 Python 集成测试
