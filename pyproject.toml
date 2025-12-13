@@ -9,7 +9,7 @@ description = "High-performance C++ Vectorization Inference Engine with AVX2 & O
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
-authors = [{name = "Aweo", email = "liugscho@163.com"}]
+authors = [{name = "Gang Liu", email = "liugscho@163.com"}]
 dependencies = [
     "numpy>=1.20",
 ]
@@ -24,5 +24,5 @@ ninja.version = ">=1.5"
 cmake.source-dir = "."
 
 # Remove explicit component filtering to install everything by default
-# install.components = ["python_modules"] 
+# install.components = ["python_modules"]
 cmake.verbose = true

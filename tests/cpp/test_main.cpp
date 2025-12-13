@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "flash_embed.h"
 
 // Basic test to verify GTest integration

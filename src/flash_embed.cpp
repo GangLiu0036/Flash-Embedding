@@ -6,5 +6,4 @@ int add(int a, int b) {
     return a + b;
 }
 
-} // namespace flash_embed
-
+}  // namespace flash_embed

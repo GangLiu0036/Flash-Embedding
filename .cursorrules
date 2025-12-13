@@ -52,7 +52,7 @@ All AI-generated code and suggestions MUST adhere to these rules.
 
 ## 5. Workflow & Git
 
-- **Commit Message**: 
+- **Commit Message**:
   - 使用中文描述。
   - 遵循 Conventional Commits 格式 (`feat:`, `fix:`, `perf:`, `test:`, `docs:`, `chore:`, `build:`, `ci:`)。
   - 描述必须具体，涵盖改动的核心价值，拒绝笼统（如 "update files" 是禁止的）。
