@@ -24,12 +24,12 @@
 ---
 
 ## Phase 1: 核心算子与 SIMD 加速 (Core Kernels)
-- [ ] **SIMD 基础设施**: 实现 `Strategy` 模式，支持 Scalar/AVX2 运行时切换。
-- [ ] **内存对齐**: 实现 `AlignedAllocator`，确保 AVX2 `load_ps` 安全。
-- [ ] **算子实现**:
-  - [ ] 余弦相似度 (Cosine Similarity)
-  - [ ] 向量归一化 (L2 Normalize)
-- [ ] **基准测试工具**: 构建标准化的 Benchmark Suite。
+- [x] **SIMD 基础设施**: 实现 `Strategy` 模式，支持 Scalar/AVX2 运行时切换。
+- [x] **内存对齐**: 实现 `AlignedAllocator`，确保 AVX2 `load_ps` 安全。
+- [x] **算子实现**:
+  - [x] 余弦相似度 (Cosine Similarity)
+  - [x] 向量归一化 (L2 Normalize)
+- [x] **基准测试工具**: 构建标准化的 Benchmark Suite。
 
 **✅ 交付物 (DoD)**:
 1. **Benchmark 规范**:
