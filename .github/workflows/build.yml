@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4 # 步骤1: 检出代码
 
-    - name: Setup Mambaforge
+    - name: Setup Miniforge
       uses: conda-incubator/setup-miniconda@v3 # 步骤2: 安装 Conda 环境
       with:
         miniforge-variant: Miniforge3
@@ -40,7 +40,7 @@ jobs:
       run: cmake --build build --target cpp_tests # 编译 C++ 测试程序
 
     - name: Run C++ Tests
-      run: cd build && ./cpp_tests # 运行 C++ 单元测试
+      run: ctest --test-dir build --output-on-failure # 运行 C++ 单元测试
 
     - name: Install Python Extension
       # --no-build-isolation: 直接使用当前 Conda 环境的工具链，避免 pip 创建隔离环境导致找不到依赖

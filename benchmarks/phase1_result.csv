@@ -1,0 +1,9 @@
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message
+"BM_CosineSimilarity_Scalar/768",2248638,311.338,311.326,ns,,,,,
+"BM_CosineSimilarity_Scalar/1024",1683792,415.533,415.524,ns,,,,,
+"BM_CosineSimilarity_Scalar/4096",422140,1658.72,1658.67,ns,,,,,
+"BM_CosineSimilarity_Scalar/769",2236916,312.822,312.816,ns,,,,,
+"BM_CosineSimilarity_AVX2/768",10848066,64.5294,64.5287,ns,,,,,
+"BM_CosineSimilarity_AVX2/1024",8014015,87.3381,87.3368,ns,,,,,
+"BM_CosineSimilarity_AVX2/4096",1927867,363.049,363.047,ns,,,,,
+"BM_CosineSimilarity_AVX2/769",10781726,64.9103,64.9087,ns,,,,,

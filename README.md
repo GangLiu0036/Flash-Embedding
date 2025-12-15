@@ -37,7 +37,7 @@ FlashEmbed-Cpp/
 本项目开发分为四个阶段，当前进展如下：
 
 - [x] **Phase 0: 项目初始化与基建** (Focus: Scaffold, CMake, CI/CD)
-- [ ] **Phase 1: 核心算子与 SIMD 加速** (Focus: AVX2, Strategy Pattern)
+- [x] **Phase 1: 核心算子与 SIMD 加速** (Focus: AVX2, Strategy Pattern)
 - [ ] **Phase 2: 推理引擎集成** (Focus: ONNX Runtime, Zero-Copy)
 - [ ] **Phase 3: 服务化与全链路优化** (Focus: FastAPI, Dynamic Batching)
 
