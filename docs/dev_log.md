@@ -25,6 +25,11 @@
 > Mamba 的 `root_prefix` 配置与 Miniforge 安装路径不一致。
 > **解决**: 修改本地 `~/.config/fish/config.fish`，将 `root_prefix` 统一指向 `~/miniforge3`，确保环境路径解析正确。
 
+### 4. CI 环境迁移 (Mambaforge Deprecation)
+> **问题**: GitHub Actions CI 失败，报错 `Unexpected HTTP response: 404`，尝试下载 `Mambaforge` 安装包失败。
+> **分析**: `Mambaforge` 发行版已停止更新并合并入 `Miniforge3`。`setup-miniconda` 尝试下载旧版链接导致 404。
+> **解决**: 更新 `.github/workflows/build.yml`，将 `miniforge-variant` 设置为 `Miniforge3`。
+
 ---
 
 ## Phase 1: 核心算子与 SIMD 加速 (Core Kernels)
@@ -34,19 +39,19 @@
 > *   **测试套件**: 完成 GTest (C++) 与 Pytest (Python) 覆盖，确保精度一致性。
 > *   **性能验证**: 输出基准测试报告，确认 AVX2 相比 Scalar 获得 >4.5x 加速。
 
-### 4. 内存管理与对齐 (Memory Alignment)
+### 5. 内存管理与对齐 (Memory Alignment)
 > **问题**: 在实现 AVX2 加速时，`_mm256_load_ps` 指令触发 `Segmentation Fault`。
 > **分析**: AVX2 指令集强制要求内存首地址必须 32 字节对齐。普通的 `std::vector` 或 `new float[]` 无法保证此对齐要求。
 > **解决**: 实现自定义分配器 `AlignedAllocator` (封装 `posix_memalign`)，并将其作为 `std::vector` 的模板参数，确保所有向量内存满足 32 字节对齐。
 
-### 5. Python 绑定与模块导出
+### 6. Python 绑定与模块导出
 > **问题**: 移除了 `bindings.cpp` 中的 `add` 示例函数后，Python 测试报错 `AttributeError`，无法导入 `FlashEmbedCore`。
 > **分析**: `python/flash_embed/__init__.py` 未正确从 `_core` 扩展模块导出新的类，且旧的引用未清理。
 > **解决**: 更新 `__init__.py`，显式导入并暴露 `FlashEmbedCore` 类，同时清理测试代码中的过时引用。
 
 ## Phase 2: 推理引擎集成 (Inference Engine)
 
-### 6. Pybind11 生命周期管理 (Object Lifecycle)
+### 7. Pybind11 生命周期管理 (Object Lifecycle)
 
 > 待记录：Python 垃圾回收 (GC) 与 C++ 对象生命周期的冲突。
 > *   分析：异步推理场景下 `numpy.ndarray` 被提前回收导致的悬垂指针问题。
@@ -54,7 +59,7 @@
 
 ## Phase 3: 服务化与全链路优化
 
-### 7. 多线程资源争抢 (Thread Contention)
+### 8. 多线程资源争抢 (Thread Contention)
 
 > 待记录：高并发下 CPU 调度延迟抖动问题。
 > *   分析：OpenMP 线程池与 ONNX Runtime 内部线程池的资源竞争（Oversubscription）。
