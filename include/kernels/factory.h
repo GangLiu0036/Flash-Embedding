@@ -1,6 +1,7 @@
 #pragma once
-#include "kernels/math_ops.h"
 #include <memory>
+
+#include "kernels/math_ops.h"
 
 namespace flash_embed {
 namespace kernels {
@@ -9,6 +10,5 @@ namespace kernels {
 std::unique_ptr<MathOps> create_scalar_ops();
 std::unique_ptr<MathOps> create_avx2_ops();
 
-} // namespace kernels
-} // namespace flash_embed
-
+}  // namespace kernels
+}  // namespace flash_embed

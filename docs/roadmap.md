@@ -36,7 +36,7 @@
    - **编译**: `-O3 -march=native -fno-tree-vectorize` (禁用自动向量化以公平对比)。
    - **计时**: Warmup 100 次 + Loop 1000 次 (取 Median)。
    - **场景**: Dim=768/1024, Batch=1/32/256。
-2. **性能报告 (`reports/phase1_benchmark.md`)**: 
+2. **性能报告 (`reports/phase1_benchmark.md`)**:
    - 目标：AVX2 相比 Naive C++ Loop 提升 **≥ 3x** (Batch≥256)。
    - 产出：CSV 数据 + Matplotlib 对比图。
 3. **正确性验证**: GTest 100% 通过，覆盖非对齐长度边界。
@@ -67,7 +67,7 @@
 **✅ 交付物 (DoD)**:
 1. **压测报告 (`reports/phase3_loadtest.md`)**:
    - **场景**: SeqLen=128, Concurrency=32。
-   - **对照组**: 
+   - **对照组**:
      1. Baseline A: FastAPI + PyTorch。
      2. Baseline B: FastAPI + ORT Python API。
    - **目标**: 相比 Baseline B，QPS 提升 **>30%**；相比 Baseline A 提升 **>50%**。
