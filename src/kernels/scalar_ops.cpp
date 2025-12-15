@@ -23,7 +23,7 @@ public:
         float norm_b = 0.0f;
 
         // 朴素循环 - 编译器可能会尝试自动向量化 (Auto-vectorize)
-        // 我们在 Benchmark 中依赖构建标志 (-fno-tree-vectorize) 来确保这是真正的标量实现
+        // 我们在 GCC 编译 Benchmark.cpp 时添加构建标志 (-fno-tree-vectorize) 来确保这是真正的标量实现
         for (size_t i = 0; i < len; ++i) {
             dot += a[i] * b[i];
             norm_a += a[i] * a[i];

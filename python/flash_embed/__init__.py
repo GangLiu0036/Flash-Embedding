@@ -1,3 +1,3 @@
-from ._core import add
+from ._core import FlashEmbedCore
 
-__all__ = ["add"]
+__all__ = ["FlashEmbedCore"]

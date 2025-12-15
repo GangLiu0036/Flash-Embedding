@@ -13,19 +13,40 @@
 > **问题**: GitHub Actions 使用 pip 安装依赖，导致与本地 Mamba 环境不一致，且无法获取系统级 C++ 库。
 > **解决**: 引入 `conda-incubator/setup-miniconda`，并在 CI 中直接复用 `environment.yml`，确保 "Local" 与 "Remote" 环境 100% 同构。
 
+### 3. 本地 Mamba 环境路径冲突
+> **问题**: 无法激活 `flash-embed` 环境，`mamba info` 显示 `base environment` 指向 `~/.local/share/mamba`，但 `$MAMBA_ROOT_PREFIX` 却被全局设置为该路径，导致与实际安装在 `~/miniforge3` 的环境不匹配。
+> **分析**:
+> ```bash
+> $ mamba info
+> # ...
+> # base environment : /home/aweo/.local/share/mamba
+> # $MAMBA_ROOT_PREFIX: set in global scope ...
+> ```
+> Mamba 的 `root_prefix` 配置与 Miniforge 安装路径不一致。
+> **解决**: 修改本地 `~/.config/fish/config.fish`，将 `root_prefix` 统一指向 `~/miniforge3`，确保环境路径解析正确。
+
 ---
 
 ## Phase 1: 核心算子与 SIMD 加速 (Core Kernels)
 
-### 3. 内存管理与对齐 (Memory Alignment)
+> **主要交付 (Key Deliverables)**:
+> *   **核心算子**: 实现 `Cosine Similarity` 与 `L2 Norm`，支持 Scalar/AVX2 运行时自动切换。
+> *   **测试套件**: 完成 GTest (C++) 与 Pytest (Python) 覆盖，确保精度一致性。
+> *   **性能验证**: 输出基准测试报告，确认 AVX2 相比 Scalar 获得 >4.5x 加速。
 
-> 待记录：在实现 SIMD 加速时遇到的 `Segmentation Fault` 问题。
-> *   分析：AVX2 指令对内存地址 32 字节对齐的要求。
-> *   解决：自定义 `AlignedAllocator` 或使用 Padding 策略的实施过程。
+### 4. 内存管理与对齐 (Memory Alignment)
+> **问题**: 在实现 AVX2 加速时，`_mm256_load_ps` 指令触发 `Segmentation Fault`。
+> **分析**: AVX2 指令集强制要求内存首地址必须 32 字节对齐。普通的 `std::vector` 或 `new float[]` 无法保证此对齐要求。
+> **解决**: 实现自定义分配器 `AlignedAllocator` (封装 `posix_memalign`)，并将其作为 `std::vector` 的模板参数，确保所有向量内存满足 32 字节对齐。
+
+### 5. Python 绑定与模块导出
+> **问题**: 移除了 `bindings.cpp` 中的 `add` 示例函数后，Python 测试报错 `AttributeError`，无法导入 `FlashEmbedCore`。
+> **分析**: `python/flash_embed/__init__.py` 未正确从 `_core` 扩展模块导出新的类，且旧的引用未清理。
+> **解决**: 更新 `__init__.py`，显式导入并暴露 `FlashEmbedCore` 类，同时清理测试代码中的过时引用。
 
 ## Phase 2: 推理引擎集成 (Inference Engine)
 
-### 4. Pybind11 生命周期管理 (Object Lifecycle)
+### 6. Pybind11 生命周期管理 (Object Lifecycle)
 
 > 待记录：Python 垃圾回收 (GC) 与 C++ 对象生命周期的冲突。
 > *   分析：异步推理场景下 `numpy.ndarray` 被提前回收导致的悬垂指针问题。
@@ -33,7 +54,7 @@
 
 ## Phase 3: 服务化与全链路优化
 
-### 5. 多线程资源争抢 (Thread Contention)
+### 7. 多线程资源争抢 (Thread Contention)
 
 > 待记录：高并发下 CPU 调度延迟抖动问题。
 > *   分析：OpenMP 线程池与 ONNX Runtime 内部线程池的资源竞争（Oversubscription）。

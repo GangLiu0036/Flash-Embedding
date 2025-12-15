@@ -41,6 +41,4 @@ PYBIND11_MODULE(_core, m) {
             return self.cosine_similarity(ptr_a, ptr_b, len);
         }, "Compute cosine similarity between two vectors.");
 
-    // 保留旧的 add 函数用于测试，或者删除它
-    m.def("add", &flash_embed::add, "A function that adds two numbers");
 }
