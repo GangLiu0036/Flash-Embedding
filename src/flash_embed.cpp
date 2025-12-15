@@ -1,6 +1,8 @@
 #include "flash_embed.h"
-#include "kernels/factory.h"
+
 #include <iostream>
+
+#include "kernels/factory.h"
 
 #if defined(__x86_64__) || defined(_M_X64)
 #include <cpuid.h>
@@ -25,7 +27,7 @@ bool has_avx2_support() {
 #endif
     return false;
 }
-} // namespace
+}  // namespace
 
 FlashEmbedCore::FlashEmbedCore() {
     if (has_avx2_support()) {
@@ -45,4 +47,4 @@ const char* FlashEmbedCore::get_backend_name() const {
     return backend_name_;
 }
 
-} // namespace flash_embed
+}  // namespace flash_embed

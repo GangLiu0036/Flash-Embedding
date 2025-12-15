@@ -1,13 +1,14 @@
 #pragma once
 #include <memory>
 #include <vector>
+
 #include "kernels/math_ops.h"
 
 namespace flash_embed {
 
 /**
  * @brief Flash-Embedding 的核心引擎类。
- * 
+ *
  * 该类作为整个 C++ 后端的入口点 (Facade)，负责：
  * 1. 管理底层的算子后端 (MathOps)。
  * 2. 在构造时自动检测 CPU 指令集 (AVX2/Scalar)，并初始化对应的策略。
@@ -27,7 +28,7 @@ public:
 
     /**
      * @brief 计算两个向量的余弦相似度。
-     * 
+     *
      * @param a 第一个向量的指针 (若使用 AVX2 后端，内存首地址必须 32 字节对齐)
      * @param b 第二个向量的指针 (若使用 AVX2 后端，内存首地址必须 32 字节对齐)
      * @param len 向量维度 (元素个数)
@@ -45,4 +46,4 @@ private:
     const char* backend_name_;
 };
 
-} // namespace flash_embed
+}  // namespace flash_embed

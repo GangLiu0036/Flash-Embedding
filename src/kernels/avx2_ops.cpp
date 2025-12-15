@@ -1,27 +1,29 @@
-#include "kernels/math_ops.h"
-#include "kernels/factory.h"
 #include <immintrin.h>
+
 #include <cmath>
-#include <stdexcept>
-#include <memory>
 #include <cstdint>
+#include <memory>
+#include <stdexcept>
+
+#include "kernels/factory.h"
+#include "kernels/math_ops.h"
 
 namespace flash_embed {
 namespace kernels {
 
 /**
  * @brief AVX2 SIMD 数学运算实现。
- * 
+ *
  * 使用 AVX2 指令集（_mm256_*）对浮点数计算进行加速。
  * 核心思想是一次处理 8 个 float，并通过 FMA (Fused Multiply-Add) 指令提升吞吐量。
- * 
+ *
  * 注意：输入内存地址必须是 32 字节对齐的，否则会导致段错误。
  */
 class Avx2Ops : public MathOps {
 public:
     /**
      * @brief 计算余弦相似度 (AVX2 加速版本)
-     * 
+     *
      * 算法流程：
      * 1. 初始化 3 个累加寄存器 (sum_dot, sum_aa, sum_bb) 为 0。
      * 2. 主循环：每次处理 8 个 float。
@@ -33,26 +35,27 @@ public:
      */
     float cosine_similarity(const float* a, const float* b, size_t len) const override {
         // 检查内存对齐 (32字节)
-        if ((reinterpret_cast<uintptr_t>(a) % 32 != 0) || (reinterpret_cast<uintptr_t>(b) % 32 != 0)) {
+        if ((reinterpret_cast<uintptr_t>(a) % 32 != 0) ||
+            (reinterpret_cast<uintptr_t>(b) % 32 != 0)) {
             throw std::runtime_error("Memory not aligned to 32 bytes for AVX2");
         }
 
         // 初始化累加器 (8个float的零向量)
         __m256 sum_dot = _mm256_setzero_ps();
-        __m256 sum_aa  = _mm256_setzero_ps();
-        __m256 sum_bb  = _mm256_setzero_ps();
+        __m256 sum_aa = _mm256_setzero_ps();
+        __m256 sum_bb = _mm256_setzero_ps();
 
         size_t i = 0;
         // 主循环：每次处理 8 个 float (256 bits / 32 bits = 8)
         // 使用循环展开 (Unrolling) 还可以进一步提升性能，但这里先保持简单
         for (; i + 7 < len; i += 8) {
-            __m256 va = _mm256_load_ps(a + i); // 加载 a[i...i+7]
-            __m256 vb = _mm256_load_ps(b + i); // 加载 b[i...i+7]
+            __m256 va = _mm256_load_ps(a + i);  // 加载 a[i...i+7]
+            __m256 vb = _mm256_load_ps(b + i);  // 加载 b[i...i+7]
 
             // FMA: a * b + c
-            sum_dot = _mm256_fmadd_ps(va, vb, sum_dot); // sum_dot += va * vb
-            sum_aa  = _mm256_fmadd_ps(va, va, sum_aa);  // sum_aa  += va * va
-            sum_bb  = _mm256_fmadd_ps(vb, vb, sum_bb);  // sum_bb  += vb * vb
+            sum_dot = _mm256_fmadd_ps(va, vb, sum_dot);  // sum_dot += va * vb
+            sum_aa = _mm256_fmadd_ps(va, va, sum_aa);    // sum_aa  += va * va
+            sum_bb = _mm256_fmadd_ps(vb, vb, sum_bb);    // sum_bb  += vb * vb
         }
 
         // 水平归约 (Horizontal Reduction)
@@ -105,7 +108,7 @@ public:
 private:
     /**
      * @brief 辅助函数：将 __m256 中的 8 个 float 相加
-     * 
+     *
      * 经典的 AVX2 reduce 模式：
      * 1. hadd: 水平相加，将相邻元素相加。
      * 2. extract + add: 提取低位和高位进行最终求和。
@@ -132,6 +135,5 @@ std::unique_ptr<MathOps> create_avx2_ops() {
     return std::make_unique<Avx2Ops>();
 }
 
-} // namespace kernels
-} // namespace flash_embed
-
+}  // namespace kernels
+}  // namespace flash_embed

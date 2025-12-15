@@ -1,9 +1,11 @@
 #include <gtest/gtest.h>
-#include <vector>
-#include <random>
+
 #include <cmath>
-#include "kernels/factory.h"
+#include <random>
+#include <vector>
+
 #include "kernels/allocator.h"
+#include "kernels/factory.h"
 
 namespace {
 
@@ -35,7 +37,7 @@ float reference_cosine(const std::vector<float>& a, const std::vector<float>& b)
     return static_cast<float>(dot / (std::sqrt(norm_a) * std::sqrt(norm_b)));
 }
 
-} // namespace
+}  // namespace
 
 class MathOpsTest : public ::testing::Test {
 protected:
@@ -88,7 +90,7 @@ TEST_F(MathOpsTest, L2NormConsistency) {
 
     for (size_t len : lengths) {
         auto a = generate_random_vector(len, 0);
-        
+
         float scalar_norm = scalar_ops->l2_norm(a.data(), len);
         float avx2_norm = avx2_ops->l2_norm(a.data(), len);
 
@@ -110,11 +112,11 @@ TEST_F(MathOpsTest, UnalignedMemoryThrows) {
     // 分配一个未对齐的内存 (使用 malloc 或 new char[])
     // 注意：new float[] 通常只保证对齐到 float (4 bytes)，不保证 32 bytes
     float* unaligned_ptr = new float[32];
-    
+
     // 强制制造一个未对齐的地址（如果 new 偶然对齐了，我们加 1）
     float* ptr = unaligned_ptr;
     if (reinterpret_cast<uintptr_t>(ptr) % 32 == 0) {
-        ptr += 1; 
+        ptr += 1;
     }
 
     // 只需要测试对齐检查是否生效
@@ -123,7 +125,7 @@ TEST_F(MathOpsTest, UnalignedMemoryThrows) {
     float* safe_unaligned_buffer = new float[64];
     float* test_ptr = safe_unaligned_buffer;
     if (reinterpret_cast<uintptr_t>(test_ptr) % 32 == 0) {
-        test_ptr += 1; // 偏移 4 字节，肯定不对齐 32
+        test_ptr += 1;  // 偏移 4 字节，肯定不对齐 32
     }
 
     // 应该抛出 runtime_error
@@ -132,4 +134,3 @@ TEST_F(MathOpsTest, UnalignedMemoryThrows) {
     delete[] unaligned_ptr;
     delete[] safe_unaligned_buffer;
 }
-

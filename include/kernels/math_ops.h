@@ -14,7 +14,7 @@ public:
 
     /**
      * @brief 计算两个向量的余弦相似度 (Cosine Similarity)。
-     * 
+     *
      * @param a 第一个向量的指针 (若使用 AVX2，内存必须 32 字节对齐)
      * @param b 第二个向量的指针 (若使用 AVX2，内存必须 32 字节对齐)
      * @param len 向量维度
@@ -24,7 +24,7 @@ public:
 
     /**
      * @brief 计算向量的 L2 范数 (Euclidean Norm)。
-     * 
+     *
      * @param a 向量指针
      * @param len 向量维度
      * @return float L2 范数
@@ -32,6 +32,5 @@ public:
     virtual float l2_norm(const float* a, size_t len) const = 0;
 };
 
-} // namespace kernels
-} // namespace flash_embed
-
+}  // namespace kernels
+}  // namespace flash_embed

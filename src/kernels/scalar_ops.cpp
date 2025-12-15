@@ -1,14 +1,15 @@
-#include "kernels/math_ops.h"
-#include "kernels/factory.h"
 #include <cmath>
 #include <memory>
+
+#include "kernels/factory.h"
+#include "kernels/math_ops.h"
 
 namespace flash_embed {
 namespace kernels {
 
 /**
  * @brief 标量 (Scalar) 数学运算实现。
- * 
+ *
  * 这是最基础的实现版本，不使用任何显式的 SIMD 指令。
  * 主要用于作为 Benchmark 的基准 (Baseline) 以及在不支持 AVX2 的旧硬件上运行。
  */
@@ -23,7 +24,8 @@ public:
         float norm_b = 0.0f;
 
         // 朴素循环 - 编译器可能会尝试自动向量化 (Auto-vectorize)
-        // 我们在 GCC 编译 Benchmark.cpp 时添加构建标志 (-fno-tree-vectorize) 来确保这是真正的标量实现
+        // 我们在 GCC 编译 Benchmark.cpp 时添加构建标志 (-fno-tree-vectorize)
+        // 来确保这是真正的标量实现
         for (size_t i = 0; i < len; ++i) {
             dot += a[i] * b[i];
             norm_a += a[i] * a[i];
@@ -53,6 +55,5 @@ std::unique_ptr<MathOps> create_scalar_ops() {
     return std::make_unique<ScalarOps>();
 }
 
-} // namespace kernels
-} // namespace flash_embed
-
+}  // namespace kernels
+}  // namespace flash_embed

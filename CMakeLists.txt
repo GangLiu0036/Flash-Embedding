@@ -51,7 +51,7 @@ if(NOT GTest_FOUND)
 endif()
 
 # Create the test executable
-add_executable(cpp_tests 
+add_executable(cpp_tests
     tests/cpp/test_ops.cpp
 )
 target_link_libraries(cpp_tests PRIVATE flash_embed_lib GTest::gtest_main)
